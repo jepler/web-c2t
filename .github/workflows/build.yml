@@ -15,14 +15,17 @@ jobs:
         steps:
             - name: checkout
               uses: actions/checkout@v2
+              with:
+                submodules: true
 
             - name: install dependencies
               run: |
                 sudo apt-get update
-                sudo apt-get --no-install-recommends -y install build-essential git
+                sudo apt-get --no-install-recommends -y install build-essential git cc65
 
             - name: build
               run: |
+                make -C c2t
                 docker run --rm -v $(pwd):/src -u $(id -u):$(id -g) emscripten/emsdk ./build.sh
 
             - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
