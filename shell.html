@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>bdftopcf font converter</title>
+    <title>c2t wavefile generator</title>
     <style>
       form label, form button {
         background-color: #7F9CCB;
@@ -70,21 +70,35 @@
     </form>
     <br/>
 
-    <div id="outputDiv"/>
+    Use the resulting audio as described at <a href="https://asciiexpress.net/diskserver/">the asciiexpress diskserver</a>:
+<ol>
+<li>Remove any floppies.
+<li>Power on your ][+ or //e.
+<li>Press CONTROL-RESET.
+<li>Connect your phone/computer headphone jack to the cassette input jack (it's next to the joystick port).
+<li>Set your phone/computer to MAX volume.
+<li>Insert a blank diskette (S6D1).
+<li><strike>Select a disk from the list to the left.</strike>
+<li>At the "]" prompt type "LOAD" and press RETURN.
+<li>Press the play button.  <strike>If problems with HIFI, use 8KFI.</strike>
+</ol>
+Note: 8KFI is not available here yet.
 
-    <textarea class="emscripten" id="output" rows="8" style="display:none"></textarea>
+Due to boooogs the audio may be erroneously reported as very long. It is typically under 3 minutes.
+    <div id="player"/>                                                                                                                                                                        
+
+    <textarea class="emscripten" id="output" rows="8"></textarea>
+
     <script type='text/javascript'>
       function downloadData(name, data) {
           var as_str = Array.from(data).map((c)=>String.fromCharCode(c)).join("")
-          var datauri = "data:application/binary;base64," + btoa(as_str)
-          var link = document.createElement("a");
-          link.download = name;
-          link.href = datauri;
-          link.target = "blank";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          delete link;
+          var datauri = "data:audio/x-wav;base64," + btoa(as_str)
+          var audio = document.createElement("audio");
+          audio.controls = true;  
+          audio.src=datauri
+          container = document.getElementById("player")
+          container.innerHTML = ''
+          container.appendChild(audio)
       }
 
       document.querySelector('#diskfile').addEventListener('change', (event) => {
@@ -93,7 +107,7 @@
           var reader = new FileReader();
           reader.onload = function(e) {
               var ifn = file.value.replace(/.*[/\\]/, "");
-              var ofn = e.value.replace(/\.[^.]*/, ".wav");
+              var ofn = "output.wav";
 window.Module = Module
               FS.writeFile(ifn, e.target.result);
               var result = Module.ccall("wave_convert", "number", ["string"], [ifn]) // _wave_convert(ifn_c);
