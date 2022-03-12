@@ -108,14 +108,13 @@ Due to boooogs the audio may be erroneously reported as very long. It is typical
           reader.onload = function(e) {
               var ifn = file.value.replace(/.*[/\\]/, "");
               var ofn = "output.wav";
-window.Module = Module
-              FS.writeFile(ifn, e.target.result);
+              FS.writeFile(ifn, new Uint8Array(e.target.result))
               var result = Module.ccall("wave_convert", "number", ["string"], [ifn]) // _wave_convert(ifn_c);
               if(result != 0) {
                   downloadData(ofn, FS.readFile("/output.wav"));
               }
           }
-          reader.readAsBinaryString(file.files[0]);
+          reader.readAsArrayBuffer(file.files[0]);
       }
       return false;
       });
